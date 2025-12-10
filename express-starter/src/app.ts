@@ -8,11 +8,13 @@ import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import { notFoundMiddleware } from "./middleware/not-found.middleware.js";
-import { requestLoggerMiddleware } from "./middleware/request-logger.middleware.js";
+import { requestContextMiddleware } from "./middleware/request-context.middleware.js";
 import { router } from "./routes/index.js";
 
 export function createApp() {
   const app = express();
+
+  app.use(requestContextMiddleware);
 
   // Security headers
   app.use(
@@ -44,9 +46,6 @@ export function createApp() {
       autoLogging: true,
     }),
   );
-
-  // Custom request logging / tracing
-  app.use(requestLoggerMiddleware);
 
   // Routes
   app.use("/api", router);
